@@ -1,6 +1,6 @@
 # Alembic getting started example
 
-Discover all the alembic tools in [https://docs.alembic.tech/](our documentation). 
+Discover all the alembic tools in [our documentation](https://docs.alembic.tech/). 
 
 ## Installation
 
