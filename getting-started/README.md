@@ -1,4 +1,7 @@
 # Alembic getting started example
+
+Discover all the alembic tools in [https://docs.alembic.tech/](our documentation). 
+
 ## Installation
 
 Clone the repo and run `yarn install`
