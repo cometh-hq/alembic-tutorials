@@ -4,11 +4,11 @@ import {
   BurnerWalletAdaptor
 } from '@alembic/account-abstraction-sdk'
 import { TransactionReceipt } from '@ethersproject/providers'
+import { Box, Button, CircularProgress, Link } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useState } from 'react'
-import { Box, Button, Link, CircularProgress } from '@mui/material'
-import { useWindowSize } from 'react-use'
 import Confetti from 'react-confetti'
+import { useWindowSize } from 'react-use'
 
 import TestNFTAbi from './SimpleTestNFT.json'
 
@@ -21,10 +21,10 @@ if (
   )
 }
 
-const TEST_NFT_CONTRACT_ADDRESS = '0x19853EDBc0eeC74994B70d78c959D0426Ff53116'
+const TEST_NFT_CONTRACT_ADDRESS = '0x533d23Cd30BAEdF1F2ea599b7e1D087575a236FF'
 
 // Instantiate wallet outside of the component so it can maintain its state across re-renders
-const walletAdaptor = new BurnerWalletAdaptor(ethers.utils.hexlify(137))
+const walletAdaptor = new BurnerWalletAdaptor(ethers.utils.hexlify(80001))
 
 const wallet = new AlembicWallet({
   authAdapter: walletAdaptor,
@@ -120,6 +120,7 @@ const App: React.FC = () => {
   const [transactionResponse, setTransactionResponse] =
     useState<TransactionReceipt | null>(null)
   const [transactionSuccess, setTransactionSuccess] = useState(false)
+  const [transactionFailure, setTransactionFailure] = useState(false)
   const [nftContract, setNftContract] = useState<ethers.Contract | null>(null)
   const [nftBalance, setNftBalance] = useState<number>(0)
   const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -142,15 +143,20 @@ const App: React.FC = () => {
 
   const sendTestTransaction = async () => {
     setIsTransactionLoading(true)
-    const tx = await nftContract!.mint()
-    const txResponse = await tx.wait()
+    try {
+      const tx = await nftContract!.mint()
+      const txResponse = await tx.wait()
 
-    const balance = await nftContract!.balanceOf(wallet.getAddress())
-    setNftBalance(balance.toString())
+      const balance = await nftContract!.balanceOf(wallet.getAddress())
+      setNftBalance(balance.toString())
 
-    setTransactionSuccess(true)
+      setTransactionResponse(txResponse)
+      setTransactionSuccess(true)
+    } catch {
+      setTransactionFailure(true)
+    }
+
     setIsTransactionLoading(false)
-    setTransactionResponse(txResponse)
   }
 
   return (
@@ -189,12 +195,13 @@ const App: React.FC = () => {
             }
           }}
           rel="noopener noreferrer"
-          href={`https://polygonscan.com/tx/${transactionResponse?.transactionHash}`}
+          href={`https://mumbai.polygonscan.com/tx/${transactionResponse?.transactionHash}`}
           target="_blank"
         >
           Go see your transaction
         </Link>
       )}
+      {transactionFailure && <p>Transaction Failed !</p>}
     </Box>
   )
 }
