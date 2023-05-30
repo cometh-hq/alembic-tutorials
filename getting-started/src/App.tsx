@@ -1,7 +1,7 @@
 import {
   AlembicProvider,
   AlembicWallet,
-  Web3AuthAdapter
+  BurnerWalletAdaptor
 } from '@alembic/account-abstraction-sdk'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { ethers } from 'ethers'
@@ -21,17 +21,10 @@ if (
 const TEST_NFT_CONTRACT_ADDRESS = '0x19853EDBc0eeC74994B70d78c959D0426Ff53116'
 
 // Instantiate wallet outside of the component so it can maintain its state across re-renders
-const web3AuthAdapter = new Web3AuthAdapter({
-  clientId: import.meta.env.VITE_APP_WEB3AUTH_CLIENT_ID,
-  web3AuthNetwork: 'testnet',
-  chainConfig: {
-    chainNamespace: 'eip155',
-    chainId: '0x89' // hex of 137, polygon mainnet
-  }
-})
+const walletAdaptor = new BurnerWalletAdaptor('0x89')
 
 const wallet = new AlembicWallet({
-  authAdapter: web3AuthAdapter,
+  authAdapter: walletAdaptor,
   apiKey: import.meta.env.VITE_APP_ALEMBIC_API_KEY
 })
 
