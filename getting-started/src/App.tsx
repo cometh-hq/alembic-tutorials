@@ -6,6 +6,9 @@ import {
 import { TransactionReceipt } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import React, { useState } from 'react'
+import { Box, Button, Link, CircularProgress } from '@mui/material'
+import { useWindowSize } from 'react-use'
+import Confetti from 'react-confetti'
 
 import TestNFTAbi from './SimpleTestNFT.json'
 
@@ -21,7 +24,7 @@ if (
 const TEST_NFT_CONTRACT_ADDRESS = '0x19853EDBc0eeC74994B70d78c959D0426Ff53116'
 
 // Instantiate wallet outside of the component so it can maintain its state across re-renders
-const walletAdaptor = new BurnerWalletAdaptor('0x89')
+const walletAdaptor = new BurnerWalletAdaptor(ethers.utils.hexlify(137))
 
 const wallet = new AlembicWallet({
   authAdapter: walletAdaptor,
@@ -30,6 +33,21 @@ const wallet = new AlembicWallet({
 
 const provider = new AlembicProvider(wallet)
 
+const style = {
+  button: {
+    backgroundColor: 'rgb(34, 139, 230)',
+    color: 'white',
+    padding: '12px 26px',
+    fontWeight: 600,
+    marginBottom: '30px'
+  },
+  nftBalance: { fontWeight: 600, marginBottom: '20px' },
+  link: {
+    lineHeight: '25px',
+    color: 'rgb(34, 139, 230)'
+  }
+}
+
 function LoginButton({
   login,
   isLoggingIn
@@ -37,60 +55,147 @@ function LoginButton({
   login: () => Promise<void>
   isLoggingIn: boolean
 }) {
-  return isLoggingIn ? (
-    <span>Logging in...</span>
-  ) : (
-    <button onClick={login}>Log in</button>
+  return (
+    <Button
+      style={style.button}
+      sx={{
+        '&:hover': {
+          filter: `brightness(90%)`,
+          cursor: 'pointer'
+        }
+      }}
+      onClick={login}
+    >
+      {isLoggingIn && (
+        <CircularProgress
+          size="24px"
+          sx={{
+            marginRight: '20px'
+          }}
+          color="inherit"
+        />
+      )}
+      Connect your Wallet
+    </Button>
+  )
+}
+
+function TransactionButton({
+  sendTestTransaction,
+  isTransactionLoading
+}: {
+  sendTestTransaction: () => Promise<void>
+  isTransactionLoading: boolean
+}) {
+  return (
+    <Button
+      style={style.button}
+      sx={{
+        '&:hover': {
+          filter: `brightness(90%)`,
+          cursor: 'pointer'
+        }
+      }}
+      onClick={sendTestTransaction}
+    >
+      {isTransactionLoading && (
+        <CircularProgress
+          size="24px"
+          sx={{
+            marginRight: '20px'
+          }}
+          color="inherit"
+        />
+      )}
+      Send Transaction
+    </Button>
   )
 }
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false)
+  const [isTransactionLoading, setIsTransactionLoading] =
+    useState<boolean>(false)
   const [transactionResponse, setTransactionResponse] =
     useState<TransactionReceipt | null>(null)
-  const [sendingTransactionText, setSendingTransactionText] = useState<
-    string | null
-  >(null)
+  const [transactionSuccess, setTransactionSuccess] = useState(false)
+  const [nftContract, setNftContract] = useState<ethers.Contract | null>(null)
+  const [nftBalance, setNftBalance] = useState<number>(0)
+  const { width: windowWidth, height: windowHeight } = useWindowSize()
 
   const login = async () => {
     setIsLoggingIn(true)
     await wallet.connect()
-    console.log(wallet.getAddress())
     setIsLoggingIn(false)
     setIsLoggedIn(true)
-  }
-
-  const sendTestTransaction = async () => {
-    setSendingTransactionText('Sending transaction...')
-
-    const nftContract = new ethers.Contract(
+    const contract = new ethers.Contract(
       TEST_NFT_CONTRACT_ADDRESS,
       TestNFTAbi.abi,
       provider.getSigner()
     )
+    setNftContract(contract)
 
-    const tx = await nftContract.mint()
+    const balance = await contract.balanceOf(wallet.getAddress())
+    setNftBalance(balance.toString())
+  }
+
+  const sendTestTransaction = async () => {
+    setIsTransactionLoading(true)
+    const tx = await nftContract!.mint()
     const txResponse = await tx.wait()
 
-    setSendingTransactionText(null)
+    const balance = await nftContract!.balanceOf(wallet.getAddress())
+    setNftBalance(balance.toString())
+
+    setTransactionSuccess(true)
+    setIsTransactionLoading(false)
     setTransactionResponse(txResponse)
   }
 
   return (
-    <div>
+    <Box
+      style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      {transactionSuccess && (
+        <Confetti width={windowWidth} height={windowHeight} />
+      )}
+
       {!isLoggedIn ? (
         <LoginButton login={login} isLoggingIn={isLoggingIn}></LoginButton>
       ) : (
         <>
-          <button onClick={sendTestTransaction}>Send Test Transaction</button>
-          {sendingTransactionText && <p>{sendingTransactionText}</p>}
-          {transactionResponse && (
-            <p>Transaction confirmed: {JSON.stringify(transactionResponse)}</p>
-          )}
+          <Box style={style.nftBalance}>NFT Balance: {nftBalance}</Box>
+          <TransactionButton
+            sendTestTransaction={sendTestTransaction}
+            isTransactionLoading={isTransactionLoading}
+          ></TransactionButton>
+          {transactionResponse && <p>Transaction confirmed !</p>}
         </>
       )}
-    </div>
+      {transactionSuccess && (
+        <Link
+          style={style.link}
+          sx={{
+            '&:hover': {
+              filter: `brightness(60%)`,
+              cursor: 'pointer'
+            }
+          }}
+          rel="noopener noreferrer"
+          href={`https://polygonscan.com/tx/${transactionResponse?.transactionHash}`}
+          target="_blank"
+        >
+          Go see your transaction
+        </Link>
+      )}
+    </Box>
   )
 }
 
