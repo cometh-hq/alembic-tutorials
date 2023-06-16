@@ -12,12 +12,9 @@ import { useWindowSize } from 'react-use'
 
 import TestNFTAbi from './SimpleTestNFT.json'
 
-if (
-  import.meta.env.VITE_APP_WEB3AUTH_CLIENT_ID === undefined ||
-  import.meta.env.VITE_APP_ALEMBIC_API_KEY === undefined
-) {
+if (import.meta.env.VITE_APP_ALEMBIC_API_KEY === undefined) {
   throw new Error(
-    'Please set the VITE_APP_WEB3AUTH_CLIENT_ID and VITE_APP_ALEMBIC_API_KEY environment variables'
+    'Please set the VITE_APP_ALEMBIC_API_KEY environment variables'
   )
 }
 
@@ -152,7 +149,8 @@ const App: React.FC = () => {
 
       setTransactionResponse(txResponse)
       setTransactionSuccess(true)
-    } catch {
+    } catch (e) {
+      console.log('Error:', e)
       setTransactionFailure(true)
     }
 
