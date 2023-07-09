@@ -10,4 +10,9 @@ Setup your .env file from the .env.example file.
 
 ## Start
 
+Set you Alembic API KEY in the following env var: 
+```
+export VITE_APP_ALEMBIC_API_KEY=YOUR_API_KEY
+```
+
 After the successfull installation of the packages: `yarn dev`
