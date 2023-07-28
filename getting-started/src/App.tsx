@@ -19,13 +19,13 @@ if (import.meta.env.VITE_APP_ALEMBIC_API_KEY === undefined) {
   )
 }
 
-const TEST_NFT_CONTRACT_ADDRESS = '0x533d23Cd30BAEdF1F2ea599b7e1D087575a236FF'
+const TEST_NFT_CONTRACT_ADDRESS = '0xfb1a1788471f86399f4bdb1ecfd88c774e21db27'
 
 // Instantiate wallet outside of the component so it can maintain its state across re-renders
 
 const wallet = new AlembicWallet({
   authAdapter: new WebAuthnAdaptor(
-    '0x13881',
+    ethers.utils.hexlify(137),
     import.meta.env.VITE_APP_ALEMBIC_API_KEY
   ),
   apiKey: import.meta.env.VITE_APP_ALEMBIC_API_KEY
@@ -128,12 +128,13 @@ const App: React.FC = () => {
 
   const login = async () => {
     setIsLoggingIn(true)
+    console.log('USERNAme', username)
     await wallet.connect(username)
     setIsLoggingIn(false)
     setIsLoggedIn(true)
     const contract = new ethers.Contract(
       TEST_NFT_CONTRACT_ADDRESS,
-      TestNFTAbi.abi,
+      TestNFTAbi,
       provider.getSigner()
     )
     setNftContract(contract)
@@ -145,7 +146,7 @@ const App: React.FC = () => {
   const sendTestTransaction = async () => {
     setIsTransactionLoading(true)
     try {
-      const tx = await nftContract!.mint()
+      const tx = await nftContract!.safeMint(wallet.getAddress())
       const txResponse = await tx.wait()
 
       const balance = await nftContract!.balanceOf(wallet.getAddress())
@@ -209,7 +210,7 @@ const App: React.FC = () => {
             }
           }}
           rel="noopener noreferrer"
-          href={`https://mumbai.polygonscan.com/tx/${transactionResponse?.transactionHash}`}
+          href={`https://polygonscan.com/tx/${transactionResponse?.transactionHash}`}
           target="_blank"
         >
           Go see your transaction
