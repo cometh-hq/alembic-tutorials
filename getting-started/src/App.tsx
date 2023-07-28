@@ -1,10 +1,11 @@
 import {
   AlembicProvider,
   AlembicWallet,
-  BurnerWalletAdaptor
+  BurnerWalletAdaptor,
+  WebAuthnAdaptor
 } from '@alembic/account-abstraction-sdk'
 import { TransactionReceipt } from '@ethersproject/providers'
-import { Box, Button, CircularProgress, Link } from '@mui/material'
+import { Box, Button, CircularProgress, Link, TextField } from '@mui/material'
 import { ethers } from 'ethers'
 import React, { useState } from 'react'
 import Confetti from 'react-confetti'
@@ -21,10 +22,12 @@ if (import.meta.env.VITE_APP_ALEMBIC_API_KEY === undefined) {
 const TEST_NFT_CONTRACT_ADDRESS = '0x533d23Cd30BAEdF1F2ea599b7e1D087575a236FF'
 
 // Instantiate wallet outside of the component so it can maintain its state across re-renders
-const walletAdaptor = new BurnerWalletAdaptor(ethers.utils.hexlify(80001))
 
 const wallet = new AlembicWallet({
-  authAdapter: walletAdaptor,
+  authAdapter: new WebAuthnAdaptor(
+    '0x13881',
+    import.meta.env.VITE_APP_ALEMBIC_API_KEY
+  ),
   apiKey: import.meta.env.VITE_APP_ALEMBIC_API_KEY
 })
 
@@ -120,11 +123,12 @@ const App: React.FC = () => {
   const [transactionFailure, setTransactionFailure] = useState(false)
   const [nftContract, setNftContract] = useState<ethers.Contract | null>(null)
   const [nftBalance, setNftBalance] = useState<number>(0)
+  const [username, setUsername] = useState('')
   const { width: windowWidth, height: windowHeight } = useWindowSize()
 
   const login = async () => {
     setIsLoggingIn(true)
-    await wallet.connect()
+    await wallet.connect(username)
     setIsLoggingIn(false)
     setIsLoggedIn(true)
     const contract = new ethers.Contract(
@@ -157,6 +161,10 @@ const App: React.FC = () => {
     setIsTransactionLoading(false)
   }
 
+  const changeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value)
+  }
+
   return (
     <Box
       style={{
@@ -172,7 +180,15 @@ const App: React.FC = () => {
       )}
 
       {!isLoggedIn ? (
-        <LoginButton login={login} isLoggingIn={isLoggingIn}></LoginButton>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <TextField
+            label="Enter your name"
+            variant="outlined"
+            value={username}
+            onChange={changeUsername}
+          />
+          <LoginButton login={login} isLoggingIn={isLoggingIn}></LoginButton>
+        </div>
       ) : (
         <>
           <Box style={style.nftBalance}>NFT Balance: {nftBalance}</Box>

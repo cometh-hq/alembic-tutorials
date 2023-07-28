@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@alembic/account-abstraction-sdk@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@alembic/account-abstraction-sdk/-/account-abstraction-sdk-0.2.1.tgz#794fb71f228ff824b5803e717819cd9a421683da"
-  integrity sha512-Z6ikV56RjR2JV6U+faLD1AlxPbghQHcDMbxJl5hJICDf9ncoU4Pfda1225ZkRRP9NJ4rRFe2OiEDEaUUGVaotA==
+"@alembic/account-abstraction-sdk@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@alembic/account-abstraction-sdk/-/account-abstraction-sdk-0.2.2.tgz#32154c2175d38dfa2083fa801d6963762ac739ea"
+  integrity sha512-l6njHnxWQp9xvu/6eGyX7ZU8DdiI6KvudwykQ0Ub0begF4TqNrjnG/LkonOYeFvrLR7obiBrREKbRpZCPJmFxw==
   dependencies:
     "@alembic/ui" "^1.5.2"
     "@ethersproject/abstract-provider" "^5.7.0"
