@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import jwks from "../../../../jwks.json";
+import jwks from "../../modules/auth/jwks.json";
 
 export async function GET(req: NextRequest) {
   try {

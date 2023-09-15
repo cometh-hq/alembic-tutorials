@@ -7,19 +7,15 @@ export function useWalletContext() {
     setWallet,
     provider,
     setProvider,
-    nftContract,
-    setNftContract,
-    userNftBalance,
-    setUserNftBalance,
+    counterContract,
+    setCounterContract,
   } = useContext(WalletContext);
   return {
     wallet,
     setWallet,
     provider,
     setProvider,
-    nftContract,
-    setNftContract,
-    userNftBalance,
-    setUserNftBalance,
+    counterContract,
+    setCounterContract,
   };
 }

@@ -5,11 +5,11 @@ import { Button } from "../lib/ui/components";
 import { TransactionReceipt } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
-import { useWalletAuth } from "../wallet/hooks/useWalletAuth";
+import { useWalletAuth } from "../modules/wallet/hooks/useWalletAuth";
 import { useWindowSize } from "../lib/ui/hooks";
 
 export function Transaction() {
-  const { wallet, nftContract } = useWalletAuth();
+  const { wallet, counterContract } = useWalletAuth();
   const [isTransactionLoading, setIsTransactionLoading] =
     useState<boolean>(false);
   const [transactionResponse, setTransactionResponse] =
@@ -37,7 +37,7 @@ export function Transaction() {
   useEffect(() => {
     if (wallet) {
       (async () => {
-        const balance = await nftContract!.counters(wallet.getAddress());
+        const balance = await counterContract!.counters(wallet.getAddress());
         setNftBalance(Number(balance));
       })();
     }
@@ -48,10 +48,10 @@ export function Transaction() {
     try {
       if (!wallet) throw new Error("No wallet instance");
 
-      const tx = await nftContract!.count();
+      const tx = await counterContract!.count();
       const txResponse = await tx.wait();
 
-      const balance = await nftContract!.counters(wallet.getAddress());
+      const balance = await counterContract!.counters(wallet.getAddress());
       setNftBalance(Number(balance));
 
       setTransactionResponse(txResponse);

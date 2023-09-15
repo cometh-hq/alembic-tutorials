@@ -7,19 +7,17 @@ import {
 } from "@alembic/account-abstraction-sdk";
 import { useState } from "react";
 import { useWalletContext } from "./useWalletContext";
-import { useAuthContext } from "@/app/auth/hooks/useAuthContext";
+import { useAuthContext } from "@/app/modules/auth/hooks/useAuthContext";
 import { ethers } from "ethers";
-import countContractAbi from "../../../../counterABI.json";
+import countContractAbi from "../../contract/counterABI.json";
 
 export function useWalletAuth() {
   const {
     setWallet,
     setProvider,
     wallet,
-    provider,
-    nftContract,
-    setNftContract,
-    setUserNftBalance,
+    counterContract,
+    setCounterContract,
   } = useWalletContext();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -28,8 +26,7 @@ export function useWalletAuth() {
   const { token } = useAuthContext();
 
   const apiKey = process.env.NEXT_PUBLIC_ALEMBIC_API_KEY!;
-  const TEST_NFT_CONTRACT_ADDRESS =
-    "0x84add3fa2c2463c8cf2c95ad70e4b5f602332160";
+  const COUNTER_CONTRACT_ADDRESS = "0x84add3fa2c2463c8cf2c95ad70e4b5f602332160";
 
   function displayError(message: string) {
     setConnectionError(message);
@@ -50,12 +47,12 @@ export function useWalletAuth() {
       await instance.connect();
 
       const contract = new ethers.Contract(
-        TEST_NFT_CONTRACT_ADDRESS,
+        COUNTER_CONTRACT_ADDRESS,
         countContractAbi,
         instanceProvider.getSigner()
       );
 
-      setNftContract(contract);
+      setCounterContract(contract);
 
       setIsConnected(true);
       setWallet(instance as any);
@@ -72,10 +69,9 @@ export function useWalletAuth() {
       try {
         await wallet!.logout();
         setIsConnected(false);
-        setUserNftBalance(null);
         setWallet(null);
         setProvider(null);
-        setNftContract(null);
+        setCounterContract(null);
       } catch (e) {
         displayError((e as Error).message);
       }
@@ -83,7 +79,7 @@ export function useWalletAuth() {
   }
   return {
     wallet,
-    nftContract,
+    counterContract,
     connect,
     disconnect,
     isConnected,

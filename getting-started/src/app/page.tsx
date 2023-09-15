@@ -3,8 +3,8 @@
 import React from "react";
 import { Button } from "./lib/ui/components";
 import { Web3 } from "./components/Web3";
-import { useAuthContext } from "./auth/hooks/useAuthContext";
-import { useTokenAuth } from "./auth/hooks/useTokenAuth";
+import { useAuthContext } from "./modules/auth/hooks/useAuthContext";
+import { useTokenAuth } from "./modules/auth/hooks/useTokenAuth";
 
 export default function App() {
   const { token } = useAuthContext();

@@ -5,7 +5,7 @@ import { CheckCircle } from "react-feather";
 
 import React from "react";
 import { Transaction } from "./Transaction";
-import { useWalletAuth } from "../wallet/hooks/useWalletAuth";
+import { useWalletAuth } from "../modules/wallet/hooks/useWalletAuth";
 
 export function Web3() {
   const { isConnecting, isConnected, connect, connectionError } =
