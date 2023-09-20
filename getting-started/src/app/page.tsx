@@ -1,14 +1,21 @@
 "use client";
 
-import React from "react";
-import { Button } from "./lib/ui/components";
+import React, { useEffect, useState } from "react";
+import { Button, Icons } from "./lib/ui/components";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Web3 } from "./components/Web3";
-import { useAuthContext } from "./modules/auth/hooks/useAuthContext";
-import { useTokenAuth } from "./modules/auth/hooks/useTokenAuth";
 
 export default function App() {
-  const { token } = useAuthContext();
-  const { getToken, userId, setUserId } = useTokenAuth();
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (status === "loading") {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [status]);
 
   return (
     <div
@@ -20,22 +27,28 @@ export default function App() {
         alignItems: "center",
       }}
     >
-      {!token && (
-        <div>
-          <input
-            type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            className="w-1/2 md:w-fit h-[32px] shrink rounded-full placeholder:text-xs placeholder:italic px-2 placeholder:opacity-50 font-semibold focus:outline-none"
-            placeholder="Nickname..."
-          />
-
-          <Button onClick={getToken} variant="default">
-            Identify
+      <div>
+        {session ? (
+          <Button variant="outline" type="button" onClick={() => signOut()}>
+            Disconnect ({session.user?.email})
           </Button>
-        </div>
-      )}
-      {token && <Web3 />}
+        ) : (
+          <Button
+            variant="outline"
+            type="button"
+            disabled={isLoading}
+            onClick={() => signIn("google", { callbackUrl: "/login" })}
+          >
+            {isLoading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Icons.google className="mr-2 h-4 w-4" />
+            )}
+            {"Connect with Google"}
+          </Button>
+        )}
+      </div>
+      {session && <Web3 />}
     </div>
   );
 }

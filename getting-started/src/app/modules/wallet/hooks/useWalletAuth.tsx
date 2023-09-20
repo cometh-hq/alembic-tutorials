@@ -1,15 +1,15 @@
 "use client";
 
 import {
-  AlembicProvider,
-  AlembicWallet,
-  CustomAuthAdaptor,
-} from "@alembic/account-abstraction-sdk";
+  ComethProvider,
+  ComethWallet,
+  ConnectAdaptor,
+} from "@cometh/connect-sdk";
 import { useState } from "react";
 import { useWalletContext } from "./useWalletContext";
-import { useAuthContext } from "@/app/modules/auth/hooks/useAuthContext";
 import { ethers } from "ethers";
 import countContractAbi from "../../contract/counterABI.json";
+import { useSession } from "next-auth/react";
 
 export function useWalletAuth() {
   const {
@@ -23,7 +23,7 @@ export function useWalletAuth() {
   const [isConnected, setIsConnected] = useState(false);
 
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const { token } = useAuthContext();
+  const { data: session } = useSession();
 
   const apiKey = process.env.NEXT_PUBLIC_ALEMBIC_API_KEY!;
   const COUNTER_CONTRACT_ADDRESS = "0x84add3fa2c2463c8cf2c95ad70e4b5f602332160";
@@ -35,14 +35,20 @@ export function useWalletAuth() {
   async function connect() {
     setIsConnecting(true);
     try {
-      const walletAdaptor = new CustomAuthAdaptor("0x89", token, apiKey);
-
-      const instance = new AlembicWallet({
-        authAdapter: walletAdaptor,
+      const walletAdaptor = new ConnectAdaptor({
+        chainId: "0x89",
+        jwtToken: session?.accessToken as string,
         apiKey,
+        baseUrl: "https://alembic-api.develop.cometh.tech/",
       });
 
-      const instanceProvider = new AlembicProvider(instance);
+      const instance = new ComethWallet({
+        authAdapter: walletAdaptor,
+        apiKey,
+        baseUrl: "https://alembic-api.develop.cometh.tech/",
+      });
+
+      const instanceProvider = new ComethProvider(instance);
 
       await instance.connect();
 
