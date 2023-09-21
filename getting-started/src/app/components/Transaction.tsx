@@ -1,12 +1,10 @@
 "use client";
 
-import { CheckCircle } from "react-feather";
-import { Button } from "../lib/ui/components";
+import { Icons } from "../lib/ui/components";
 import { TransactionReceipt } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
-import Confetti from "react-confetti";
 import { useWalletAuth } from "../modules/wallet/hooks/useWalletAuth";
-import { useWindowSize } from "../lib/ui/hooks";
+import Alert from "../lib/ui/components/Alert";
 
 export function Transaction() {
   const { wallet, counterContract } = useWalletAuth();
@@ -16,7 +14,6 @@ export function Transaction() {
     useState<TransactionReceipt | null>(null);
   const [transactionSuccess, setTransactionSuccess] = useState(false);
   const [transactionFailure, setTransactionFailure] = useState(false);
-  const { width: windowWidth, height: windowHeight } = useWindowSize();
   const [nftBalance, setNftBalance] = useState<number>(0);
 
   function TransactionButton({
@@ -27,10 +24,16 @@ export function Transaction() {
     isTransactionLoading: boolean;
   }) {
     return (
-      <Button onClick={sendTestTransaction}>
-        {isTransactionLoading && <CheckCircle />}
-        Send Transaction
-      </Button>
+      <button
+        className="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200"
+        onClick={sendTestTransaction}
+      >
+        {isTransactionLoading ? (
+          <Icons.spinner className="h-4 w-4 animate-spin" />
+        ) : (
+          "+1"
+        )}
+      </button>
     );
   }
 
@@ -65,31 +68,42 @@ export function Transaction() {
   };
 
   return (
-    <main className="md:min-h-[70vh] flex justify-center items-center">
-      {transactionSuccess && (
-        <Confetti width={windowWidth} height={windowHeight} />
-      )}
-      <div>
-        <>
-          <div>Counter: {nftBalance}</div>
+    <main>
+      <div className="p-4">
+        <div className="relative flex gap-x-6 rounded-lg p-4">
           <TransactionButton
             sendTestTransaction={sendTestTransaction}
             isTransactionLoading={isTransactionLoading}
-          ></TransactionButton>
-          {transactionResponse && <p>Transaction confirmed !</p>}
-        </>
-
-        {transactionSuccess && (
-          <a
-            rel="noopener noreferrer"
-            href={`https://polygonscan.com/tx/${transactionResponse?.transactionHash}`}
-            target="_blank"
-          >
-            Go see your transaction
-          </a>
-        )}
-        {transactionFailure && <p>Transaction Failed !</p>}
+          />
+          <div>
+            <p className="font-semibold text-gray-900">Counter</p>
+            <p className="mt-1 text-gray-600">Actual value: {nftBalance} </p>
+          </div>
+        </div>
       </div>
+      {transactionResponse && !transactionSuccess && (
+        <Alert
+          state="information"
+          content="Transaction in progress !"
+          link={{
+            content: "Go see your transaction",
+            url: `https://polygonscan.com/tx/${transactionResponse?.transactionHash}`,
+          }}
+        />
+      )}
+      {transactionSuccess && (
+        <Alert
+          state="success"
+          content="Transaction confirmed !"
+          link={{
+            content: "Go see your transaction",
+            url: `https://polygonscan.com/tx/${transactionResponse?.transactionHash}`,
+          }}
+        />
+      )}
+      {transactionFailure && (
+        <Alert state="error" content="Transaction Failed !" />
+      )}
     </main>
   );
 }

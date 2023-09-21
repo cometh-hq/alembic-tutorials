@@ -39,13 +39,13 @@ export function useWalletAuth() {
         chainId: "0x89",
         jwtToken: session?.accessToken as string,
         apiKey,
-        baseUrl: "https://alembic-api.develop.cometh.tech/",
+        baseUrl: "https://api.connect.develop.cometh.tech/",
       });
 
       const instance = new ComethWallet({
         authAdapter: walletAdaptor,
         apiKey,
-        baseUrl: "https://alembic-api.develop.cometh.tech/",
+        baseUrl: "https://api.connect.develop.cometh.tech/",
       });
 
       const instanceProvider = new ComethProvider(instance);
