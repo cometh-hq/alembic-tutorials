@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alembic/account-abstraction-sdk": "0.3.2-dev.14",
     "@cometh/connect-sdk": "^1.0.0-rc.1",
     "@radix-ui/react-slot": "^1.0.2",
     "@types/node": "20.3.2",

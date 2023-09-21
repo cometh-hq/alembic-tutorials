@@ -10,7 +10,6 @@ import { useWalletAuth } from "../modules/wallet/hooks/useWalletAuth";
 export function Web3() {
   const { isConnecting, isConnected, connect, connectionError } =
     useWalletAuth();
-
   function Connect() {
     return (
       <>
