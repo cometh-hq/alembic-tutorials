@@ -3,12 +3,12 @@ import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-interface ConnectGoogleProps {
+interface ConnectAuth0Props {
   session: Session | null;
   status: "authenticated" | "loading" | "unauthenticated";
 }
 
-function ConnectGoogle({ session, status }: ConnectGoogleProps): JSX.Element {
+function ConnectAuth0({ session, status }: ConnectAuth0Props): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -33,17 +33,13 @@ function ConnectGoogle({ session, status }: ConnectGoogleProps): JSX.Element {
       <button
         disabled={isLoading}
         className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100 disabled:bg-white"
-        onClick={() => signIn("google", { callbackUrl: "/login" })}
+        onClick={() => signIn("auth0", { callbackUrl: "/login" })}
       >
-        {isLoading ? (
-          <Icons.spinner className="h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.google className="h-4 w-4" />
-        )}
-        {"Connect with Google"}
+        {isLoading && <Icons.spinner className="h-4 w-4 animate-spin" />}
+        {"Connect with Auth0"}
       </button>
     );
   }
 }
 
-export default ConnectGoogle;
+export default ConnectAuth0;

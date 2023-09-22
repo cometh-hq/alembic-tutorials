@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSession } from "next-auth/react";
-import ConnectGoogle from "./components/ConnectGoogle";
+import ConnectAuth0 from "./components/ConnectAuth0";
 import { useWalletAuth } from "./modules/wallet/hooks/useWalletAuth";
 import ConnectWallet from "./components/ConnectWallet";
 import { Transaction } from "./components/Transaction";
@@ -34,11 +34,11 @@ export default function App() {
                   connect={connect}
                   connectionError={connectionError}
                 />
-                <ConnectGoogle session={session} status={status} />
+                <ConnectAuth0 session={session} status={status} />
               </div>
             ) : (
               <div className="grid divide-x divide-gray-900/5 bg-gray-50">
-                <ConnectGoogle session={session} status={status} />
+                <ConnectAuth0 session={session} status={status} />
               </div>
             )}
           </div>
