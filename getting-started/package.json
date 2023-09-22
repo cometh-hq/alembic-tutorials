@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cometh/connect-sdk": "^1.0.0-rc.1",
+    "@cometh/connect-sdk": "^1.0.0-rc.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@types/node": "20.3.2",
     "@types/node-jose": "^1.1.10",

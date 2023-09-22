@@ -4,6 +4,7 @@ import {
   ComethProvider,
   ComethWallet,
   ConnectAdaptor,
+  SupportedNetworks,
 } from "@cometh/connect-sdk";
 import { useState } from "react";
 import { useWalletContext } from "./useWalletContext";
@@ -36,7 +37,7 @@ export function useWalletAuth() {
     setIsConnecting(true);
     try {
       const walletAdaptor = new ConnectAdaptor({
-        chainId: "0x89",
+        chainId: SupportedNetworks.MUMBAI,
         jwtToken: session?.accessToken as string,
         apiKey,
         baseUrl: "https://api.connect.develop.cometh.tech/",
