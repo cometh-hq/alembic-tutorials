@@ -1,12 +1,13 @@
 import { Icons } from "@/app/lib/ui/components";
+import { ComethWallet } from "@cometh/connect-sdk";
 import { CheckIcon } from "@radix-ui/react-icons";
-import { useEffect, useState } from "react";
 
 interface ConnectWalletProps {
   connectionError: string | null;
   isConnecting: boolean;
   isConnected: boolean;
   connect: () => Promise<void>;
+  wallet: ComethWallet;
 }
 
 function ConnectWallet({
@@ -14,13 +15,19 @@ function ConnectWallet({
   isConnecting,
   isConnected,
   connect,
+  wallet,
 }: ConnectWalletProps): JSX.Element {
   const getTextButton = () => {
     if (isConnected) {
       return (
         <>
           <CheckIcon width={20} height={20} />
-          {"Connected"}
+          <a
+            href={`https://mumbai.polygonscan.com/address/${wallet.getAddress()}`}
+            target="_blank"
+          >
+            {"Wallet connected"}
+          </a>
         </>
       );
     } else if (isConnecting) {

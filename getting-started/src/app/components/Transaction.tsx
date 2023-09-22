@@ -102,7 +102,10 @@ export function Transaction({
         </div>
       </div>
       {transactionSended && !transactionResponse && (
-        <Alert state="information" content="Transaction in progress !" />
+        <Alert
+          state="information"
+          content="Transaction in progress.. (est. time 10 sec)"
+        />
       )}
       {transactionSuccess && (
         <Alert

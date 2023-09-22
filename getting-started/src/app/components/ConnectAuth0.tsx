@@ -1,5 +1,5 @@
 import { Icons } from "@/app/lib/ui/components";
-import { ExitIcon } from "@radix-ui/react-icons";
+import { ExitIcon, PersonIcon } from "@radix-ui/react-icons";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -36,8 +36,12 @@ function ConnectAuth0({ session, status }: ConnectAuth0Props): JSX.Element {
         className="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100 disabled:bg-white"
         onClick={() => signIn("auth0", { callbackUrl: "/login" })}
       >
-        {isLoading && <Icons.spinner className="h-4 w-4 animate-spin" />}
-        {"Connect with Auth0"}
+        {isLoading ? (
+          <Icons.spinner className="h-4 w-4 animate-spin" />
+        ) : (
+          <PersonIcon />
+        )}
+        {"Login"}
       </button>
     );
   }
