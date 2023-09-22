@@ -1,4 +1,5 @@
 import { Icons } from "@/app/lib/ui/components";
+import { CheckIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 interface ConnectWalletProps {
@@ -18,7 +19,7 @@ function ConnectWallet({
     if (isConnected) {
       return (
         <>
-          <Icons.logo className="mr-2 h-6 w-6" />
+          <CheckIcon width={20} height={20} />
           {"Connected"}
         </>
       );
@@ -26,11 +27,11 @@ function ConnectWallet({
       return (
         <>
           <Icons.spinner className="h-6 w-6 animate-spin" />
-          {"Waiting connection..."}
+          {"Getting wallet..."}
         </>
       );
     } else {
-      return "Connect your Wallet";
+      return "Get your Wallet";
     }
   };
 

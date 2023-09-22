@@ -27,7 +27,7 @@ export function useWalletAuth() {
   const { data: session } = useSession();
 
   const apiKey = process.env.NEXT_PUBLIC_ALEMBIC_API_KEY!;
-  const COUNTER_CONTRACT_ADDRESS = "0x84add3fa2c2463c8cf2c95ad70e4b5f602332160";
+  const COUNTER_CONTRACT_ADDRESS = "0x3633A1bE570fBD902D10aC6ADd65BB11FC914624";
 
   function displayError(message: string) {
     setConnectionError(message);

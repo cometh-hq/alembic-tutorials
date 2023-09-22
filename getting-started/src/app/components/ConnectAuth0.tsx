@@ -1,4 +1,5 @@
 import { Icons } from "@/app/lib/ui/components";
+import { ExitIcon } from "@radix-ui/react-icons";
 import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ function ConnectAuth0({ session, status }: ConnectAuth0Props): JSX.Element {
         className="flex items-center justify-center gap-x-2.5 p-3 font-semibol text-gray-900 hover:bg-gray-100"
         onClick={() => signOut()}
       >
-        Disconnect to {session.user?.email}
+        <ExitIcon width={16} height={16} /> {session.user?.email}
       </button>
     );
   } else {
